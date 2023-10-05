@@ -28,16 +28,16 @@ func NewCrawler(repo interfaces.IMemoryLinkRepository, httpClient interfaces.IHT
 
 func (c *Crawler) Crawl(startItem entities.Link) {
 	toVisitChan := make(chan string, 100)
-	visitedChan := make(chan string)
+	visitedChan := make(chan entities.Link)
 
 	go c.startWorkers(startItem, toVisitChan, visitedChan)
 
-	for url := range visitedChan {
-		fmt.Println("visited URL:", url)
+	for link := range visitedChan {
+		fmt.Printf(link.String())
 	}
 }
 
-func (c *Crawler) startWorkers(startItem entities.Link, toVisitChan, visitedChan chan string) {
+func (c *Crawler) startWorkers(startItem entities.Link, toVisitChan chan string, visitedChan chan entities.Link) {
 	var wgWorkers sync.WaitGroup
 	var wgURLs sync.WaitGroup
 

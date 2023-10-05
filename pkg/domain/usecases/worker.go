@@ -14,7 +14,7 @@ type Worker struct {
 	HTTPClient interfaces.IHTTPClient
 }
 
-func (w *Worker) Work(workerID int, wgWorkers, wgURLs *sync.WaitGroup, toVisitChan, visitedChan chan string) {
+func (w *Worker) Work(workerID int, wgWorkers, wgURLs *sync.WaitGroup, toVisitChan chan string, visitedChan chan entities.Link) {
 	defer wgWorkers.Done()
 
 	for url := range toVisitChan {
@@ -34,7 +34,12 @@ func (w *Worker) Work(workerID int, wgWorkers, wgURLs *sync.WaitGroup, toVisitCh
 				toVisitChan <- link
 			}
 		}
-		visitedChan <- url
+
+		visitedLink := entities.Link{
+			URL:   url,
+			Links: links,
+		}
+		visitedChan <- visitedLink
 
 		wgURLs.Done()
 	}
