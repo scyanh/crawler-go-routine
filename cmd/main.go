@@ -27,7 +27,7 @@ func main() {
 	crawler := usecases.NewCrawler(repo, httpClient, numWorkers)
 
 	// Inicio del proceso de crawling
-	startURL := entities.URL{Value: "https://parserdigital.com/"}
+	startURL := entities.Item{URL: "https://parserdigital.com/"}
 	crawler.Crawl(startURL)
 
 	// Muestra el tiempo de ejecución

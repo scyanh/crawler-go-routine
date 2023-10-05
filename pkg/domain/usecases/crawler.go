@@ -9,11 +9,11 @@ import (
 )
 
 type Crawler struct {
-	Repo       db.IMemoryURLRepository
+	Repo       db.IMemoryItemRepository
 	WorkerPool []*Worker
 }
 
-func NewCrawler(repo db.IMemoryURLRepository, httpClient http.IHTTPClient, numWorkers int) *Crawler {
+func NewCrawler(repo db.IMemoryItemRepository, httpClient http.IHTTPClient, numWorkers int) *Crawler {
 	workers := make([]*Worker, numWorkers)
 	for i := 0; i < numWorkers; i++ {
 		workers[i] = &Worker{
@@ -27,18 +27,18 @@ func NewCrawler(repo db.IMemoryURLRepository, httpClient http.IHTTPClient, numWo
 	}
 }
 
-func (c *Crawler) Crawl(startURL entities.URL) {
+func (c *Crawler) Crawl(startItem entities.Item) {
 	toVisitChan := make(chan string, 100)
 	visitedChan := make(chan string)
 
-	go c.startWorkers(startURL, toVisitChan, visitedChan)
+	go c.startWorkers(startItem, toVisitChan, visitedChan)
 
 	for url := range visitedChan {
 		fmt.Println("visited URL:", url)
 	}
 }
 
-func (c *Crawler) startWorkers(startURL entities.URL, toVisitChan, visitedChan chan string) {
+func (c *Crawler) startWorkers(startItem entities.Item, toVisitChan, visitedChan chan string) {
 	var wgWorkers sync.WaitGroup
 	var wgURLs sync.WaitGroup
 
@@ -47,7 +47,7 @@ func (c *Crawler) startWorkers(startURL entities.URL, toVisitChan, visitedChan c
 		go worker.Work(i, &wgWorkers, &wgURLs, toVisitChan, visitedChan)
 	}
 
-	toVisitChan <- startURL.Value
+	toVisitChan <- startItem.URL
 	wgURLs.Add(1)
 
 	wgURLs.Wait()

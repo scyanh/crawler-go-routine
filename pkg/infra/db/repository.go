@@ -5,9 +5,9 @@ import (
 	"sync"
 )
 
-type IMemoryURLRepository interface {
-	HasBeenVisited(url entities.URL) bool
-	MarkAsVisited(url entities.URL)
+type IMemoryItemRepository interface {
+	HasBeenVisited(url entities.Item) bool
+	MarkAsVisited(url entities.Item)
 }
 
 type MemoryURLRepository struct {
@@ -21,14 +21,14 @@ func NewInMemoryURLRepository() *MemoryURLRepository {
 	}
 }
 
-func (r *MemoryURLRepository) HasBeenVisited(url entities.URL) bool {
+func (r *MemoryURLRepository) HasBeenVisited(item entities.Item) bool {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	return r.visitedURLs[url.Value]
+	return r.visitedURLs[item.URL]
 }
 
-func (r *MemoryURLRepository) MarkAsVisited(url entities.URL) {
+func (r *MemoryURLRepository) MarkAsVisited(item entities.Item) {
 	r.mu.Lock()
-	r.visitedURLs[url.Value] = true
+	r.visitedURLs[item.URL] = true
 	r.mu.Unlock()
 }
