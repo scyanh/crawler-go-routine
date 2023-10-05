@@ -8,7 +8,6 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	entities "github.com/scyanh/crawler/pkg/domain/entities"
 )
 
 // MockIMemoryLinkRepository is a mock of IMemoryLinkRepository interface.
@@ -34,28 +33,16 @@ func (m *MockIMemoryLinkRepository) EXPECT() *MockIMemoryLinkRepositoryMockRecor
 	return m.recorder
 }
 
-// HasBeenVisited mocks base method.
-func (m *MockIMemoryLinkRepository) HasBeenVisited(link entities.Link) bool {
+// IsFirstVisit mocks base method.
+func (m *MockIMemoryLinkRepository) IsFirstVisit(url string) bool {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HasBeenVisited", link)
+	ret := m.ctrl.Call(m, "IsFirstVisit", url)
 	ret0, _ := ret[0].(bool)
 	return ret0
 }
 
-// HasBeenVisited indicates an expected call of HasBeenVisited.
-func (mr *MockIMemoryLinkRepositoryMockRecorder) HasBeenVisited(link interface{}) *gomock.Call {
+// IsFirstVisit indicates an expected call of IsFirstVisit.
+func (mr *MockIMemoryLinkRepositoryMockRecorder) IsFirstVisit(url interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasBeenVisited", reflect.TypeOf((*MockIMemoryLinkRepository)(nil).HasBeenVisited), link)
-}
-
-// MarkAsVisited mocks base method.
-func (m *MockIMemoryLinkRepository) MarkAsVisited(link entities.Link) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "MarkAsVisited", link)
-}
-
-// MarkAsVisited indicates an expected call of MarkAsVisited.
-func (mr *MockIMemoryLinkRepositoryMockRecorder) MarkAsVisited(link interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MarkAsVisited", reflect.TypeOf((*MockIMemoryLinkRepository)(nil).MarkAsVisited), link)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsFirstVisit", reflect.TypeOf((*MockIMemoryLinkRepository)(nil).IsFirstVisit), url)
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/scyanh/crawler/pkg/domain/entities"
 	"github.com/scyanh/crawler/pkg/domain/interfaces"
+	"runtime"
 	"sync"
 )
 
@@ -27,14 +28,19 @@ func NewCrawler(repo interfaces.IMemoryLinkRepository, httpClient interfaces.IHT
 }
 
 func (c *Crawler) Crawl(startItem entities.Link) {
-	toVisitChan := make(chan string, 100)
-	visitedChan := make(chan entities.Link)
+	toVisitChan := make(chan string, 1000)
+	visitedChan := make(chan entities.Link, 1000)
 
 	go c.startWorkers(startItem, toVisitChan, visitedChan)
 
+	var links []entities.Link
+
 	for link := range visitedChan {
 		fmt.Printf(link.String())
+		links = append(links, link)
 	}
+
+	fmt.Printf("Total links: %d \n", len(links))
 }
 
 func (c *Crawler) startWorkers(startItem entities.Link, toVisitChan chan string, visitedChan chan entities.Link) {
@@ -46,11 +52,20 @@ func (c *Crawler) startWorkers(startItem entities.Link, toVisitChan chan string,
 		go worker.Work(i, &wgWorkers, &wgURLs, toVisitChan, visitedChan)
 	}
 
-	toVisitChan <- startItem.URL
 	wgURLs.Add(1)
+	toVisitChan <- startItem.URL
 
-	wgURLs.Wait()
-	close(toVisitChan)
+	fmt.Printf("Current 1 Goroutines: %d\n", runtime.NumGoroutine())
+	// Goroutine para cerrar el canal después de que todas las URLs se hayan visitado
+	go func() {
+		fmt.Printf("Current 2 Goroutines: %d\n", runtime.NumGoroutine())
+		wgURLs.Wait()
+		fmt.Printf("Current 3 Goroutines: %d\n", runtime.NumGoroutine())
+		close(toVisitChan)
+	}()
+
+	fmt.Printf("Current 4 Goroutines: %d\n", runtime.NumGoroutine())
 	wgWorkers.Wait()
+	fmt.Printf("Current 5 Goroutines: %d\n", runtime.NumGoroutine())
 	close(visitedChan)
 }

@@ -1,7 +1,6 @@
 package db
 
 import (
-	"github.com/scyanh/crawler/pkg/domain/entities"
 	"sync"
 )
 
@@ -16,14 +15,18 @@ func NewInMemoryURLRepository() *MemoryURLRepository {
 	}
 }
 
-func (r *MemoryURLRepository) HasBeenVisited(link entities.Link) bool {
+// IsFirstVisit checks if the given URL has been visited before. If it's the
+// first visit, it marks the URL as visited and returns true. Otherwise,
+// returns false.
+func (r *MemoryURLRepository) IsFirstVisit(url string) bool {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	return r.visitedURLs[link.URL]
-}
 
-func (r *MemoryURLRepository) MarkAsVisited(link entities.Link) {
-	r.mu.Lock()
-	r.visitedURLs[link.URL] = true
-	r.mu.Unlock()
+	if r.visitedURLs[url] {
+		return false
+	}
+
+	// Mark the URL as visited and return true
+	r.visitedURLs[url] = true
+	return true
 }

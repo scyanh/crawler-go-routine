@@ -39,28 +39,27 @@ func TestCrawler_Crawl(t *testing.T) {
 	//setupMocksForURL(t, repoMock, "https://parserdigital.com/about/")
 	//setupMocksForURL(t, repoMock, "https://parserdigital.com/expertise/")
 
-	linkHome := entities.Link{URL: "https://parserdigital.com"}
+	linkHome := "https://parserdigital.com"
 
 	callCount := 0
-	repoMock.EXPECT().HasBeenVisited(linkHome).DoAndReturn(func(url interface{}) bool {
+	repoMock.EXPECT().IsFirstVisit(linkHome).DoAndReturn(func(url interface{}) bool {
 		callCount++
 		if callCount == 1 {
-			return false
+			return true
 		}
-		return true
+		return false
 	}).AnyTimes()
 
-	linkAbout := entities.Link{URL: "https://parserdigital.com/about/"}
+	linkAbout := "https://parserdigital.com/about/"
 	callCount2 := 0
-	repoMock.EXPECT().HasBeenVisited(linkAbout).DoAndReturn(func(url interface{}) bool {
+	repoMock.EXPECT().IsFirstVisit(linkAbout).DoAndReturn(func(url interface{}) bool {
 		callCount2++
 		if callCount2 == 1 {
-			return false
+			return true
 		}
-		return true
+		return false
 	}).AnyTimes()
 
-	repoMock.EXPECT().MarkAsVisited(gomock.Any()).AnyTimes()
 	httpClientMock.EXPECT().Get("https://parserdigital.com").Return(htmlHome, nil).AnyTimes()
 	httpClientMock.EXPECT().Get("https://parserdigital.com/about/").Return(htmlAbout, nil).AnyTimes()
 
@@ -72,11 +71,12 @@ func TestCrawler_Crawl(t *testing.T) {
 	startLink := entities.Link{URL: "https://parserdigital.com"}
 	crawler.Crawl(startLink)
 
-	visited := repoMock.HasBeenVisited(startLink)
-	assert.True(t, visited, "The URL should be marked as visited")
+	firstVisit := repoMock.IsFirstVisit(startLink.URL)
+	assert.False(t, firstVisit, "The URL should have been visited before.")
+
 }
 
-func setupMocksForURL(t *testing.T, repoMock *interfaces.MockIMemoryLinkRepository, url string) {
+/*func setupMocksForURL(t *testing.T, repoMock *interfaces.MockIMemoryLinkRepository, url string) {
 	callCount := 0
 	repoMock.EXPECT().HasBeenVisited(url).DoAndReturn(func(url interface{}) bool {
 		callCount++
@@ -85,4 +85,4 @@ func setupMocksForURL(t *testing.T, repoMock *interfaces.MockIMemoryLinkReposito
 		}
 		return true
 	}).AnyTimes()
-}
+}*/
