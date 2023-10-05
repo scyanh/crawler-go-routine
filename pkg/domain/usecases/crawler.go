@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/scyanh/crawler/pkg/domain/entities"
 	"github.com/scyanh/crawler/pkg/domain/interfaces"
-	"runtime"
 	"sync"
 )
 
@@ -55,17 +54,12 @@ func (c *Crawler) startWorkers(startItem entities.Link, toVisitChan chan string,
 	wgURLs.Add(1)
 	toVisitChan <- startItem.URL
 
-	fmt.Printf("Current 1 Goroutines: %d\n", runtime.NumGoroutine())
 	// Goroutine para cerrar el canal después de que todas las URLs se hayan visitado
 	go func() {
-		fmt.Printf("Current 2 Goroutines: %d\n", runtime.NumGoroutine())
 		wgURLs.Wait()
-		fmt.Printf("Current 3 Goroutines: %d\n", runtime.NumGoroutine())
 		close(toVisitChan)
 	}()
 
-	fmt.Printf("Current 4 Goroutines: %d\n", runtime.NumGoroutine())
 	wgWorkers.Wait()
-	fmt.Printf("Current 5 Goroutines: %d\n", runtime.NumGoroutine())
 	close(visitedChan)
 }
