@@ -41,11 +41,10 @@ func (c *Crawler) Crawl(startURL entities.URL) {
 func (c *Crawler) startWorkers(startURL entities.URL, toVisitChan, visitedChan chan string) {
 	var wgWorkers sync.WaitGroup
 	var wgURLs sync.WaitGroup
-	visited := make(map[string]bool)
 
 	for i, worker := range c.WorkerPool {
 		wgWorkers.Add(1)
-		go worker.Work(i, &wgWorkers, &wgURLs, toVisitChan, visitedChan, visited)
+		go worker.Work(i, &wgWorkers, &wgURLs, toVisitChan, visitedChan)
 	}
 
 	toVisitChan <- startURL.Value

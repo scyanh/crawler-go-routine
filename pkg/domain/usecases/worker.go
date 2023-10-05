@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"fmt"
+	"github.com/scyanh/crawler/pkg/domain/entities"
 	"github.com/scyanh/crawler/pkg/infra/db"
 	"github.com/scyanh/crawler/pkg/infra/http"
 	"golang.org/x/net/html"
@@ -16,10 +17,11 @@ type Worker struct {
 
 var mu sync.Mutex
 
-func (w *Worker) Work(workerID int, wgWorkers, wgURLs *sync.WaitGroup, toVisitChan, visitedChan chan string, visited map[string]bool) {
+func (w *Worker) Work(workerID int, wgWorkers, wgURLs *sync.WaitGroup, toVisitChan, visitedChan chan string) {
 	defer wgWorkers.Done()
 
 	for url := range toVisitChan {
+
 		links, err := w.getLinks(workerID, url)
 		if err != nil {
 			fmt.Println("Error crawling:", url, "-", err)
@@ -27,16 +29,15 @@ func (w *Worker) Work(workerID int, wgWorkers, wgURLs *sync.WaitGroup, toVisitCh
 			continue
 		}
 
-		mu.Lock()
 		for _, link := range links {
-			if _, seen := visited[link]; !seen {
-				visited[link] = true
+			linkEntity := entities.URL{Value: link}
+			if !w.Repo.HasBeenVisited(linkEntity) {
+				w.Repo.MarkAsVisited(linkEntity)
 				wgURLs.Add(1)
 				toVisitChan <- link
 			}
 		}
 		visitedChan <- url
-		mu.Unlock()
 
 		wgURLs.Done()
 	}
