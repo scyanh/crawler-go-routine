@@ -1,5 +1,5 @@
 package entities
 
-type Item struct {
+type Link struct {
 	URL string
 }

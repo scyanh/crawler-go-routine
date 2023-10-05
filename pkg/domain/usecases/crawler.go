@@ -8,11 +8,11 @@ import (
 )
 
 type Crawler struct {
-	Repo       interfaces.IMemoryItemRepository
+	Repo       interfaces.IMemoryLinkRepository
 	WorkerPool []*Worker
 }
 
-func NewCrawler(repo interfaces.IMemoryItemRepository, httpClient interfaces.IHTTPClient, numWorkers int) *Crawler {
+func NewCrawler(repo interfaces.IMemoryLinkRepository, httpClient interfaces.IHTTPClient, numWorkers int) *Crawler {
 	workers := make([]*Worker, numWorkers)
 	for i := 0; i < numWorkers; i++ {
 		workers[i] = &Worker{
@@ -26,7 +26,7 @@ func NewCrawler(repo interfaces.IMemoryItemRepository, httpClient interfaces.IHT
 	}
 }
 
-func (c *Crawler) Crawl(startItem entities.Item) {
+func (c *Crawler) Crawl(startItem entities.Link) {
 	toVisitChan := make(chan string, 100)
 	visitedChan := make(chan string)
 
@@ -37,7 +37,7 @@ func (c *Crawler) Crawl(startItem entities.Item) {
 	}
 }
 
-func (c *Crawler) startWorkers(startItem entities.Item, toVisitChan, visitedChan chan string) {
+func (c *Crawler) startWorkers(startItem entities.Link, toVisitChan, visitedChan chan string) {
 	var wgWorkers sync.WaitGroup
 	var wgURLs sync.WaitGroup
 

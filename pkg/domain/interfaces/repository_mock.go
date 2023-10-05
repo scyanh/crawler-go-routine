@@ -11,65 +11,51 @@ import (
 	entities "github.com/scyanh/crawler/pkg/domain/entities"
 )
 
-// MockIMemoryItemRepository is a mock of IMemoryItemRepository interface.
-type MockIMemoryItemRepository struct {
+// MockIMemoryLinkRepository is a mock of IMemoryLinkRepository interface.
+type MockIMemoryLinkRepository struct {
 	ctrl     *gomock.Controller
-	recorder *MockIMemoryItemRepositoryMockRecorder
+	recorder *MockIMemoryLinkRepositoryMockRecorder
 }
 
-// MockIMemoryItemRepositoryMockRecorder is the mock recorder for MockIMemoryItemRepository.
-type MockIMemoryItemRepositoryMockRecorder struct {
-	mock *MockIMemoryItemRepository
+// MockIMemoryLinkRepositoryMockRecorder is the mock recorder for MockIMemoryLinkRepository.
+type MockIMemoryLinkRepositoryMockRecorder struct {
+	mock *MockIMemoryLinkRepository
 }
 
-// NewMockIMemoryItemRepository creates a new mock instance.
-func NewMockIMemoryItemRepository(ctrl *gomock.Controller) *MockIMemoryItemRepository {
-	mock := &MockIMemoryItemRepository{ctrl: ctrl}
-	mock.recorder = &MockIMemoryItemRepositoryMockRecorder{mock}
+// NewMockIMemoryLinkRepository creates a new mock instance.
+func NewMockIMemoryLinkRepository(ctrl *gomock.Controller) *MockIMemoryLinkRepository {
+	mock := &MockIMemoryLinkRepository{ctrl: ctrl}
+	mock.recorder = &MockIMemoryLinkRepositoryMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockIMemoryItemRepository) EXPECT() *MockIMemoryItemRepositoryMockRecorder {
+func (m *MockIMemoryLinkRepository) EXPECT() *MockIMemoryLinkRepositoryMockRecorder {
 	return m.recorder
 }
 
-// GetURLs mocks base method.
-func (m *MockIMemoryItemRepository) GetURLs() map[string]bool {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetURLs")
-	ret0, _ := ret[0].(map[string]bool)
-	return ret0
-}
-
-// GetURLs indicates an expected call of GetURLs.
-func (mr *MockIMemoryItemRepositoryMockRecorder) GetURLs() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetURLs", reflect.TypeOf((*MockIMemoryItemRepository)(nil).GetURLs))
-}
-
 // HasBeenVisited mocks base method.
-func (m *MockIMemoryItemRepository) HasBeenVisited(url entities.Item) bool {
+func (m *MockIMemoryLinkRepository) HasBeenVisited(link entities.Link) bool {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HasBeenVisited", url)
+	ret := m.ctrl.Call(m, "HasBeenVisited", link)
 	ret0, _ := ret[0].(bool)
 	return ret0
 }
 
 // HasBeenVisited indicates an expected call of HasBeenVisited.
-func (mr *MockIMemoryItemRepositoryMockRecorder) HasBeenVisited(url interface{}) *gomock.Call {
+func (mr *MockIMemoryLinkRepositoryMockRecorder) HasBeenVisited(link interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasBeenVisited", reflect.TypeOf((*MockIMemoryItemRepository)(nil).HasBeenVisited), url)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasBeenVisited", reflect.TypeOf((*MockIMemoryLinkRepository)(nil).HasBeenVisited), link)
 }
 
 // MarkAsVisited mocks base method.
-func (m *MockIMemoryItemRepository) MarkAsVisited(url entities.Item) {
+func (m *MockIMemoryLinkRepository) MarkAsVisited(link entities.Link) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "MarkAsVisited", url)
+	m.ctrl.Call(m, "MarkAsVisited", link)
 }
 
 // MarkAsVisited indicates an expected call of MarkAsVisited.
-func (mr *MockIMemoryItemRepositoryMockRecorder) MarkAsVisited(url interface{}) *gomock.Call {
+func (mr *MockIMemoryLinkRepositoryMockRecorder) MarkAsVisited(link interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MarkAsVisited", reflect.TypeOf((*MockIMemoryItemRepository)(nil).MarkAsVisited), url)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MarkAsVisited", reflect.TypeOf((*MockIMemoryLinkRepository)(nil).MarkAsVisited), link)
 }

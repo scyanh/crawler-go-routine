@@ -32,42 +32,33 @@ func TestCrawler_Crawl(t *testing.T) {
 	}
 
 	// Setup Mocks
-	repoMock := interfaces.NewMockIMemoryItemRepository(ctrl)
+	repoMock := interfaces.NewMockIMemoryLinkRepository(ctrl)
 	httpClientMock := interfaces.NewMockIHTTPClient(ctrl)
 
 	//setupMocksForURL(t, repoMock, "https://parserdigital.com")
 	//setupMocksForURL(t, repoMock, "https://parserdigital.com/about/")
 	//setupMocksForURL(t, repoMock, "https://parserdigital.com/expertise/")
 
-	itemHome := entities.Item{URL: "https://parserdigital.com"}
-	/*
-		callCount := 0
-		repoMock.EXPECT().HasBeenVisited(itemHome).DoAndReturn(func(url interface{}) bool {
-			callCount++
-			if callCount == 1 {
-				return false
-			}
-			return true
-		}).AnyTimes()*/
-	gomock.InOrder(
-		repoMock.EXPECT().HasBeenVisited(itemHome).Return(false),
-		repoMock.EXPECT().HasBeenVisited(itemHome).Return(true),
-	)
+	linkHome := entities.Link{URL: "https://parserdigital.com"}
 
-	itemAbout := entities.Item{URL: "https://parserdigital.com/about/"}
-	gomock.InOrder(
-		repoMock.EXPECT().HasBeenVisited(itemAbout).Return(false),
-		repoMock.EXPECT().HasBeenVisited(itemAbout).Return(true),
-	)
-
-	/*callCount3 := 0
-	repoMock.EXPECT().HasBeenVisited("https://parserdigital.com/expertise/").DoAndReturn(func(url interface{}) bool {
-		callCount3++
-		if callCount3 == 1 {
+	callCount := 0
+	repoMock.EXPECT().HasBeenVisited(linkHome).DoAndReturn(func(url interface{}) bool {
+		callCount++
+		if callCount == 1 {
 			return false
 		}
 		return true
-	}).AnyTimes()*/
+	}).AnyTimes()
+
+	linkAbout := entities.Link{URL: "https://parserdigital.com/about/"}
+	callCount2 := 0
+	repoMock.EXPECT().HasBeenVisited(linkAbout).DoAndReturn(func(url interface{}) bool {
+		callCount2++
+		if callCount2 == 1 {
+			return false
+		}
+		return true
+	}).AnyTimes()
 
 	repoMock.EXPECT().MarkAsVisited(gomock.Any()).AnyTimes()
 	httpClientMock.EXPECT().Get("https://parserdigital.com").Return(htmlHome, nil).AnyTimes()
@@ -78,14 +69,14 @@ func TestCrawler_Crawl(t *testing.T) {
 	crawler := NewCrawler(repoMock, httpClientMock, numWorkers)
 
 	// Execute the crawler
-	startItem := entities.Item{URL: "https://parserdigital.com"}
-	crawler.Crawl(startItem)
+	startLink := entities.Link{URL: "https://parserdigital.com"}
+	crawler.Crawl(startLink)
 
-	visited := repoMock.HasBeenVisited(startItem)
+	visited := repoMock.HasBeenVisited(startLink)
 	assert.True(t, visited, "The URL should be marked as visited")
 }
 
-func setupMocksForURL(t *testing.T, repoMock *interfaces.MockIMemoryItemRepository, url string) {
+func setupMocksForURL(t *testing.T, repoMock *interfaces.MockIMemoryLinkRepository, url string) {
 	callCount := 0
 	repoMock.EXPECT().HasBeenVisited(url).DoAndReturn(func(url interface{}) bool {
 		callCount++

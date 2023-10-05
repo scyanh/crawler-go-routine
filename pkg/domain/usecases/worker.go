@@ -10,7 +10,7 @@ import (
 )
 
 type Worker struct {
-	Repo       interfaces.IMemoryItemRepository
+	Repo       interfaces.IMemoryLinkRepository
 	HTTPClient interfaces.IHTTPClient
 }
 
@@ -27,7 +27,7 @@ func (w *Worker) Work(workerID int, wgWorkers, wgURLs *sync.WaitGroup, toVisitCh
 		}
 
 		for _, link := range links {
-			linkEntity := entities.Item{URL: link}
+			linkEntity := entities.Link{URL: link}
 			if !w.Repo.HasBeenVisited(linkEntity) {
 				w.Repo.MarkAsVisited(linkEntity)
 				wgURLs.Add(1)

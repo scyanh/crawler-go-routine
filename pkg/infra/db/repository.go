@@ -16,14 +16,14 @@ func NewInMemoryURLRepository() *MemoryURLRepository {
 	}
 }
 
-func (r *MemoryURLRepository) HasBeenVisited(item entities.Item) bool {
+func (r *MemoryURLRepository) HasBeenVisited(link entities.Link) bool {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	return r.visitedURLs[item.URL]
+	return r.visitedURLs[link.URL]
 }
 
-func (r *MemoryURLRepository) MarkAsVisited(item entities.Item) {
+func (r *MemoryURLRepository) MarkAsVisited(link entities.Link) {
 	r.mu.Lock()
-	r.visitedURLs[item.URL] = true
+	r.visitedURLs[link.URL] = true
 	r.mu.Unlock()
 }

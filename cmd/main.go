@@ -27,7 +27,7 @@ func main() {
 	crawler := usecases.NewCrawler(repo, httpClient, maxWorkers)
 
 	// crawler execution
-	startURL := entities.Item{URL: targetURL}
+	startURL := entities.Link{URL: targetURL}
 	crawler.Crawl(startURL)
 
 	// print execution time
