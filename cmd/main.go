@@ -2,37 +2,40 @@ package main
 
 import (
 	"fmt"
-	"golang.org/x/net/html"
-	"net/http"
-	"strings"
+	"github.com/scyanh/crawler/pkg/domain/entities"
+	"github.com/scyanh/crawler/pkg/domain/usecases"
+	"github.com/scyanh/crawler/pkg/infra/db"
+	"github.com/scyanh/crawler/pkg/infra/http"
+	"runtime"
 	"time"
 
 	"sync"
 )
 
-var mu sync.Mutex // Mutex para el acceso concurrente al mapa visited
+var mu sync.Mutex
 
 func main() {
-	//repo := db.NewInMemoryURLRepository()
-	//client := http.NewHTTPClient()
+	numCPU := runtime.NumCPU()
+	runtime.GOMAXPROCS(numCPU)
+	fmt.Printf("Utilizando %d CPUs\n", numCPU)
+	startTime := time.Now()
 
-	//workerPool := worker.NewGoroutineWorkerPool(10, client, repo)
-	//crawler := usecases.NewCrawlerInteractor(repo, workerPool)
-	//crawler.Crawl("https://parserdigital.com/")
+	// Inicialización de las dependencias
+	repo := db.NewInMemoryURLRepository()
+	httpClient := http.NewHTTPClient(50 * time.Second)
+	numWorkers := 10
+	crawler := usecases.NewCrawler(repo, httpClient, numWorkers)
 
-	startURL := "https://parserdigital.com/"
-	toVisitChan := make(chan string, 100)
-	visitedChan := make(chan string)
-	visited := make(map[string]bool)
+	// Inicio del proceso de crawling
+	startURL := entities.URL{Value: "https://parserdigital.com/"}
+	crawler.Crawl(startURL)
 
-	go crawler(startURL, toVisitChan, visitedChan, visited)
-
-	for url := range visitedChan {
-		fmt.Println("visited URL:", url)
-	}
-	fmt.Println("finished")
+	// Muestra el tiempo de ejecución
+	duration := time.Since(startTime)
+	fmt.Printf("La ejecución tomó %v\n", duration)
 }
 
+/*
 func crawler(startURL string, toVisitChan, visitedChan chan string, visited map[string]bool) {
 	var wgWorkers sync.WaitGroup
 	var wgURLs sync.WaitGroup
@@ -80,7 +83,7 @@ func worker(workerID int, wgWorkers, wgURLs *sync.WaitGroup, toVisitChan, visite
 
 func getLinks(workerID int, url string) ([]string, error) {
 	client := &http.Client{
-		Timeout: 5 * time.Second,
+		Timeout: 50 * time.Second,
 	}
 
 	resp, err := client.Get(url)
@@ -117,3 +120,4 @@ func getLinks(workerID int, url string) ([]string, error) {
 	f(doc)
 	return links, nil
 }
+*/

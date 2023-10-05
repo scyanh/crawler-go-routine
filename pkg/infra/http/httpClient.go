@@ -6,14 +6,18 @@ import (
 	"time"
 )
 
+type IHTTPClient interface {
+	Get(url string) (content string, err error)
+}
+
 type HTTPClient struct {
 	client *http.Client
 }
 
-func NewHTTPClient() *HTTPClient {
+func NewHTTPClient(timeout time.Duration) *HTTPClient {
 	return &HTTPClient{
 		client: &http.Client{
-			Timeout: time.Second * 10, // Definir un tiempo de espera de 10 segundos para las solicitudes
+			Timeout: time.Second * timeout,
 		},
 	}
 }
@@ -25,7 +29,6 @@ func (c *HTTPClient) Get(url string) (content string, err error) {
 	}
 	defer resp.Body.Close()
 
-	// Asegúrate de que recibimos un código de estado 200 OK
 	if resp.StatusCode != http.StatusOK {
 		return "", err
 	}

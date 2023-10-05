@@ -1,29 +1,58 @@
 package usecases
 
 import (
-	"github.com/scyanh/crawler/pkg/domain"
+	"fmt"
 	"github.com/scyanh/crawler/pkg/domain/entities"
+	"github.com/scyanh/crawler/pkg/infra/db"
+	"github.com/scyanh/crawler/pkg/infra/http"
+	"sync"
 )
 
-type CrawlerInteractor struct {
-	repo    domain.Repository
-	workers entities.WorkerPool
+type Crawler struct {
+	Repo       db.IMemoryURLRepository
+	WorkerPool []*Worker
 }
 
-func NewCrawlerInteractor(r domain.Repository, w entities.WorkerPool) *CrawlerInteractor {
-	return &CrawlerInteractor{repo: r, workers: w}
+func NewCrawler(repo db.IMemoryURLRepository, httpClient http.IHTTPClient, numWorkers int) *Crawler {
+	workers := make([]*Worker, numWorkers)
+	for i := 0; i < numWorkers; i++ {
+		workers[i] = &Worker{
+			Repo:       repo,
+			HTTPClient: httpClient,
+		}
+	}
+	return &Crawler{
+		Repo:       repo,
+		WorkerPool: workers,
+	}
 }
-func (ci *CrawlerInteractor) Crawl(startURL string) {
-	// Start workers
-	ci.workers.Start()
 
-	// Add the starting URL as an initial job
-	initialWebPage := &entities.WebPage{URL: startURL, Visited: false}
-	ci.repo.AddURL(*initialWebPage)
-	ci.workers.AddJob(initialWebPage)
+func (c *Crawler) Crawl(startURL entities.URL) {
+	toVisitChan := make(chan string, 100)
+	visitedChan := make(chan string)
 
-	// Now, you could keep checking for unvisited URLs and keep adding to workers.
-	// However, remember, since the workers themselves would be finding new URLs and
-	// adding to the repo, you may want to design a way for the workers to signal
-	// when there are truly no more URLs left to crawl to terminate the process gracefully.
+	go c.startWorkers(startURL, toVisitChan, visitedChan)
+
+	for url := range visitedChan {
+		fmt.Println("visited URL:", url)
+	}
+}
+
+func (c *Crawler) startWorkers(startURL entities.URL, toVisitChan, visitedChan chan string) {
+	var wgWorkers sync.WaitGroup
+	var wgURLs sync.WaitGroup
+	visited := make(map[string]bool)
+
+	for i, worker := range c.WorkerPool {
+		wgWorkers.Add(1)
+		go worker.Work(i, &wgWorkers, &wgURLs, toVisitChan, visitedChan, visited)
+	}
+
+	toVisitChan <- startURL.Value
+	wgURLs.Add(1)
+
+	wgURLs.Wait()
+	close(toVisitChan)
+	wgWorkers.Wait()
+	close(visitedChan)
 }
