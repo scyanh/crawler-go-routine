@@ -3,17 +3,16 @@ package usecases
 import (
 	"fmt"
 	"github.com/scyanh/crawler/pkg/domain/entities"
-	"github.com/scyanh/crawler/pkg/infra/db"
-	"github.com/scyanh/crawler/pkg/infra/http"
+	"github.com/scyanh/crawler/pkg/domain/interfaces"
 	"sync"
 )
 
 type Crawler struct {
-	Repo       db.IMemoryItemRepository
+	Repo       interfaces.IMemoryItemRepository
 	WorkerPool []*Worker
 }
 
-func NewCrawler(repo db.IMemoryItemRepository, httpClient http.IHTTPClient, numWorkers int) *Crawler {
+func NewCrawler(repo interfaces.IMemoryItemRepository, httpClient interfaces.IHTTPClient, numWorkers int) *Crawler {
 	workers := make([]*Worker, numWorkers)
 	for i := 0; i < numWorkers; i++ {
 		workers[i] = &Worker{

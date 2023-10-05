@@ -14,25 +14,29 @@ import (
 
 var mu sync.Mutex
 
+const (
+	targetURL          = "https://parserdigital.com/"
+	httpRequestTimeOut = 50 // value in seconds
+	maxWorkers         = 10
+)
+
 func main() {
-	numCPU := runtime.NumCPU()
-	runtime.GOMAXPROCS(numCPU)
-	fmt.Printf("Utilizando %d CPUs\n", numCPU)
+	// allow parallelism
+	runtime.GOMAXPROCS(runtime.NumCPU())
 	startTime := time.Now()
 
-	// Inicialización de las dependencias
+	// dependencies initialization
 	repo := db.NewInMemoryURLRepository()
-	httpClient := http.NewHTTPClient(50 * time.Second)
-	numWorkers := 10
-	crawler := usecases.NewCrawler(repo, httpClient, numWorkers)
+	httpClient := http.NewHTTPClient(httpRequestTimeOut * time.Second)
+	crawler := usecases.NewCrawler(repo, httpClient, maxWorkers)
 
-	// Inicio del proceso de crawling
-	startURL := entities.Item{URL: "https://parserdigital.com/"}
+	// crawler execution
+	startURL := entities.Item{URL: targetURL}
 	crawler.Crawl(startURL)
 
-	// Muestra el tiempo de ejecución
+	// print execution time
 	duration := time.Since(startTime)
-	fmt.Printf("La ejecución tomó %v\n", duration)
+	fmt.Printf("Execution time: %s \n", duration)
 }
 
 /*

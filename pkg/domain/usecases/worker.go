@@ -3,16 +3,15 @@ package usecases
 import (
 	"fmt"
 	"github.com/scyanh/crawler/pkg/domain/entities"
-	"github.com/scyanh/crawler/pkg/infra/db"
-	"github.com/scyanh/crawler/pkg/infra/http"
+	"github.com/scyanh/crawler/pkg/domain/interfaces"
 	"golang.org/x/net/html"
 	"strings"
 	"sync"
 )
 
 type Worker struct {
-	Repo       db.IMemoryItemRepository
-	HTTPClient http.IHTTPClient
+	Repo       interfaces.IMemoryItemRepository
+	HTTPClient interfaces.IHTTPClient
 }
 
 var mu sync.Mutex

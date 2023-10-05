@@ -6,10 +6,6 @@ import (
 	"time"
 )
 
-type IHTTPClient interface {
-	Get(url string) (content string, err error)
-}
-
 type HTTPClient struct {
 	client *http.Client
 }

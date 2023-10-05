@@ -5,11 +5,6 @@ import (
 	"sync"
 )
 
-type IMemoryItemRepository interface {
-	HasBeenVisited(url entities.Item) bool
-	MarkAsVisited(url entities.Item)
-}
-
 type MemoryURLRepository struct {
 	visitedURLs map[string]bool
 	mu          sync.Mutex
