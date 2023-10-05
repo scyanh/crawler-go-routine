@@ -14,8 +14,6 @@ type Worker struct {
 	HTTPClient interfaces.IHTTPClient
 }
 
-var mu sync.Mutex
-
 func (w *Worker) Work(workerID int, wgWorkers, wgURLs *sync.WaitGroup, toVisitChan, visitedChan chan string) {
 	defer wgWorkers.Done()
 

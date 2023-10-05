@@ -8,11 +8,7 @@ import (
 	"github.com/scyanh/crawler/pkg/infra/http"
 	"runtime"
 	"time"
-
-	"sync"
 )
-
-var mu sync.Mutex
 
 const (
 	targetURL          = "https://parserdigital.com/"
