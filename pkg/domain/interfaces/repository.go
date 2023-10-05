@@ -1,8 +1,6 @@
 package interfaces
 
-import (
-	"github.com/scyanh/crawler/pkg/domain/entities"
-)
+import "github.com/scyanh/crawler/pkg/domain/entities"
 
 type IMemoryItemRepository interface {
 	HasBeenVisited(url entities.Item) bool
