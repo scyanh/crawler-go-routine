@@ -11,6 +11,7 @@ type HTTPClient struct {
 	client *http.Client
 }
 
+// NewHTTPClient creates a new HTTPClient with the given timeout.
 func NewHTTPClient(timeout time.Duration) *HTTPClient {
 	return &HTTPClient{
 		client: &http.Client{
@@ -19,6 +20,7 @@ func NewHTTPClient(timeout time.Duration) *HTTPClient {
 	}
 }
 
+// Get performs a GET request to the given URL and returns the response body.
 func (c *HTTPClient) Get(url string) (content string, err error) {
 	resp, err := c.client.Get(url)
 	if err != nil {

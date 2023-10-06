@@ -12,7 +12,7 @@ import (
 
 const (
 	targetURL          = "https://parserdigital.com/"
-	httpRequestTimeOut = 5 * time.Second
+	httpRequestTimeOut = 15 * time.Second
 	maxWorkers         = 20
 )
 

@@ -1,50 +1,50 @@
 package usecases
 
 import (
-	"fmt"
 	"github.com/scyanh/crawler/pkg/domain/entities"
 	"github.com/scyanh/crawler/pkg/domain/interfaces"
 	"golang.org/x/net/html"
+	"log"
 	"strings"
 	"sync"
 )
+
+const validDomain = "https://parserdigital.com"
 
 type Worker struct {
 	Repo       interfaces.IMemoryLinkRepository
 	HTTPClient interfaces.IHTTPClient
 }
 
+// Work is the main function of the worker. It will be executed in a goroutine.
 func (w *Worker) Work(workerID int, wgWorkers, wgURLs *sync.WaitGroup, toVisitChan chan string, visitedChan chan entities.Link) {
 	defer wgWorkers.Done()
 
 	for url := range toVisitChan {
 		if w.Repo.IsFirstVisit(url) {
+			visitedLink := entities.Link{URL: url}
 
 			links, err := w.getLinks(workerID, url)
 			if err != nil {
-				fmt.Println("Error crawling:", url, "-", err)
+				log.Println("Error crawling:", url, "-", err)
+				visitedLink.Error = true
 			} else {
-
 				for _, link := range links {
-					//linkEntity2 := entities.Link{URL: link}
-					//if !w.Repo.HasBeenVisited(linkEntity2) {
-					wgURLs.Add(1) // Incrementa por cada nueva URL que agregues al canal
+					wgURLs.Add(1)
 					toVisitChan <- link
-					//}
 				}
 			}
 
-			visitedLink := entities.Link{
-				URL:   url,
-				Links: links,
-			}
+			visitedLink.Links = links
 			visitedChan <- visitedLink
 		}
 
-		wgURLs.Done() // Decrementa después de procesar la URL actual
+		// Decrease the counter of pending URLs to visit
+		wgURLs.Done()
 	}
 }
 
+// getLinks returns all the links found in the HTML of the given URL.
 func (w *Worker) getLinks(workerID int, url string) ([]string, error) {
 	content, err := w.HTTPClient.Get(url)
 	if err != nil {
@@ -63,10 +63,8 @@ func (w *Worker) getLinks(workerID int, url string) ([]string, error) {
 			for _, a := range n.Attr {
 				if a.Key == "href" {
 					if w.isValidLink(a.Val) {
-						fmt.Printf("worker=%d a.Val filtered: %s \n", workerID, a.Val)
+						log.Printf("worker=%d valid link: %s \n", workerID, a.Val)
 						links = append(links, a.Val)
-					} else {
-						fmt.Printf("worker=%d a.Val removed: %s \n", workerID, a.Val)
 					}
 				}
 			}
@@ -79,8 +77,9 @@ func (w *Worker) getLinks(workerID int, url string) ([]string, error) {
 	return links, nil
 }
 
+// isValidLink returns true if the given URL is valid to visit based on the validDomain.
 func (w *Worker) isValidLink(url string) bool {
-	if strings.HasPrefix(url, "https://parserdigital.com") && url != "#" && url != "/" && url != "" {
+	if strings.HasPrefix(url, validDomain) {
 		return true
 	}
 

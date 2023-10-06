@@ -35,30 +35,8 @@ func TestCrawler_Crawl(t *testing.T) {
 	repoMock := interfaces.NewMockIMemoryLinkRepository(ctrl)
 	httpClientMock := interfaces.NewMockIHTTPClient(ctrl)
 
-	//setupMocksForURL(t, repoMock, "https://parserdigital.com")
-	//setupMocksForURL(t, repoMock, "https://parserdigital.com/about/")
-	//setupMocksForURL(t, repoMock, "https://parserdigital.com/expertise/")
-
-	linkHome := "https://parserdigital.com"
-
-	callCount := 0
-	repoMock.EXPECT().IsFirstVisit(linkHome).DoAndReturn(func(url interface{}) bool {
-		callCount++
-		if callCount == 1 {
-			return true
-		}
-		return false
-	}).AnyTimes()
-
-	linkAbout := "https://parserdigital.com/about/"
-	callCount2 := 0
-	repoMock.EXPECT().IsFirstVisit(linkAbout).DoAndReturn(func(url interface{}) bool {
-		callCount2++
-		if callCount2 == 1 {
-			return true
-		}
-		return false
-	}).AnyTimes()
+	setupMocksForURL(repoMock, "https://parserdigital.com")
+	setupMocksForURL(repoMock, "https://parserdigital.com/about/")
 
 	httpClientMock.EXPECT().Get("https://parserdigital.com").Return(htmlHome, nil).AnyTimes()
 	httpClientMock.EXPECT().Get("https://parserdigital.com/about/").Return(htmlAbout, nil).AnyTimes()
@@ -76,13 +54,13 @@ func TestCrawler_Crawl(t *testing.T) {
 
 }
 
-/*func setupMocksForURL(t *testing.T, repoMock *interfaces.MockIMemoryLinkRepository, url string) {
+func setupMocksForURL(repoMock *interfaces.MockIMemoryLinkRepository, url string) {
 	callCount := 0
-	repoMock.EXPECT().HasBeenVisited(url).DoAndReturn(func(url interface{}) bool {
+	repoMock.EXPECT().IsFirstVisit(url).DoAndReturn(func(url interface{}) bool {
 		callCount++
 		if callCount == 1 {
-			return false
+			return true
 		}
-		return true
+		return false
 	}).AnyTimes()
-}*/
+}
