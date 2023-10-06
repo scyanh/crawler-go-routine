@@ -6,6 +6,7 @@ import (
 	"github.com/scyanh/crawler/pkg/domain/interfaces"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
+	"sync"
 	"testing"
 )
 
@@ -66,10 +67,15 @@ func loadTestData(t *testing.T) (string, string, string) {
 	return htmlHome, htmlAbout, htmlExpertise
 }
 
+var mutex sync.Mutex
+
 func setupMocksForURL(repoMock *interfaces.MockIMemoryLinkRepository, url string) {
-	callCount := 0
+	var callCount int
 	repoMock.EXPECT().IsFirstVisit(url).DoAndReturn(func(url interface{}) bool {
+		mutex.Lock()
 		callCount++
+		mutex.Unlock()
+
 		if callCount == 1 {
 			return true
 		}
