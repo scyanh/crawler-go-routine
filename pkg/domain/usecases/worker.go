@@ -63,7 +63,7 @@ func (w *Worker) getLinks(workerID int, url string) ([]string, error) {
 			for _, a := range n.Attr {
 				if a.Key == "href" {
 					if w.isValidLink(a.Val) {
-						log.Printf("worker=%d valid link: %s \n", workerID, a.Val)
+						//log.Printf("worker=%d valid link: %s \n", workerID, a.Val)
 						links = append(links, a.Val)
 					}
 				}

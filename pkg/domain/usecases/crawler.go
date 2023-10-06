@@ -1,9 +1,9 @@
 package usecases
 
 import (
-	"fmt"
 	"github.com/scyanh/crawler/pkg/domain/entities"
 	"github.com/scyanh/crawler/pkg/domain/interfaces"
+	"log"
 	"sync"
 )
 
@@ -38,11 +38,11 @@ func (c *Crawler) Crawl(startItem entities.Link) {
 	var links []entities.Link
 
 	for link := range visitedChan {
-		fmt.Printf(link.String())
+		log.Println(link.String())
 		links = append(links, link)
 	}
 
-	fmt.Printf("Total links: %d \n", len(links))
+	log.Printf("Total links: %d \n", len(links))
 }
 
 // startWorkers starts the workers and closes the channels when all the URLs have been visited.
