@@ -27,7 +27,7 @@ github.com/scyanh/crawler/pkg/domain/usecases/worker.go:61.25,62.50 1 1
 github.com/scyanh/crawler/pkg/domain/usecases/worker.go:62.50,63.29 1 1
 github.com/scyanh/crawler/pkg/domain/usecases/worker.go:63.29,64.24 1 1
 github.com/scyanh/crawler/pkg/domain/usecases/worker.go:64.24,65.30 1 1
-github.com/scyanh/crawler/pkg/domain/usecases/worker.go:65.30,68.7 2 1
+github.com/scyanh/crawler/pkg/domain/usecases/worker.go:65.30,68.7 1 1
 github.com/scyanh/crawler/pkg/domain/usecases/worker.go:72.3,72.54 1 1
 github.com/scyanh/crawler/pkg/domain/usecases/worker.go:72.54,74.4 1 1
 github.com/scyanh/crawler/pkg/domain/usecases/worker.go:76.2,77.19 2 1

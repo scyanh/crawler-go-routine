@@ -26,7 +26,6 @@ func (r *MemoryURLRepository) IsFirstVisit(url string) bool {
 		return false
 	}
 
-	// Mark the URL as visited and return true
 	r.visitedURLs[url] = true
 	return true
 }

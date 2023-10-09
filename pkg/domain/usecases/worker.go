@@ -16,7 +16,7 @@ type Worker struct {
 	HTTPClient interfaces.IHTTPClient
 }
 
-// Work is the main function of the worker. It will be executed in a goroutine.
+// Work is the main function of the worker.
 func (w *Worker) Work(workerID int, wgWorkers, wgURLs *sync.WaitGroup, toVisitChan chan string, visitedChan chan entities.Link) {
 	defer wgWorkers.Done()
 
