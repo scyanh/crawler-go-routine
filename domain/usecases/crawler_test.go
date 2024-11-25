@@ -2,8 +2,8 @@ package usecases
 
 import (
 	"github.com/golang/mock/gomock"
-	"github.com/scyanh/crawler/pkg/domain/entities"
-	"github.com/scyanh/crawler/pkg/domain/interfaces"
+	"github.com/scyanh/crawler/domain/entities"
+	"github.com/scyanh/crawler/domain/interfaces"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"sync"

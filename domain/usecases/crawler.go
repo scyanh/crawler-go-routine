@@ -1,8 +1,8 @@
 package usecases
 
 import (
-	"github.com/scyanh/crawler/pkg/domain/entities"
-	"github.com/scyanh/crawler/pkg/domain/interfaces"
+	"github.com/scyanh/crawler/domain/entities"
+	"github.com/scyanh/crawler/domain/interfaces"
 	"log"
 	"sync"
 )

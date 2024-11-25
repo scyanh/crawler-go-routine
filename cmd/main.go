@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/scyanh/crawler/pkg/domain/entities"
-	"github.com/scyanh/crawler/pkg/domain/usecases"
-	"github.com/scyanh/crawler/pkg/infra/db"
-	"github.com/scyanh/crawler/pkg/infra/http"
+	"github.com/scyanh/crawler/domain/entities"
+	"github.com/scyanh/crawler/domain/usecases"
+	"github.com/scyanh/crawler/infra/db"
+	"github.com/scyanh/crawler/infra/http"
 	"runtime"
 	"time"
 )
